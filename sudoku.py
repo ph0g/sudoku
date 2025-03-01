@@ -5,6 +5,17 @@ class SudokuGrid:
         self._size = builder.size
         self._grid = builder.grid
 
+    @staticmethod
+    def from_array(array_of_values):
+        builder = SudokuGrid.Builder(size=len(array_of_values))
+        for i, row in enumerate(array_of_values):
+            for j, value in enumerate(row):
+                if value == 0:
+                    continue
+                builder.set(value, row_index=i, column_index=j)
+        return builder.build()
+
+
     @property
     def size(self):
         return self._size
@@ -21,7 +32,7 @@ class SudokuGrid:
             s += ('+' + '|'.join([f'{self._grid[i][j]:{value_string_max_length}}'
                                   if self._grid[i][j] != 0 else ' '*value_string_max_length for j in range(self.size)])
                   + '+\n')
-        return s + ('+' + '-'*value_string_max_length)*self.size + '+\n'
+        return s + ('+' + '-'*value_string_max_length)*self.size + '+'
 
     class Builder:
         def __init__(self, size=9):
@@ -85,8 +96,9 @@ class SudokuGrid:
                         raise ValueError(f'Value {value} is already present in the row {column_index}.')
                     if self._column_contains(column_index, value):
                         raise ValueError(f'Value {value} is already present in the column {column_index}.')
-                    if self._area_contains(self._get_area_index(row_index, column_index), value):
-                        raise ValueError(f'Value {value} is already present in the area {column_index}.')
+                    area_index = self._get_area_index(row_index, column_index)
+                    if self._area_contains(area_index, value):
+                        raise ValueError(f'Value {value} is already present in the area {area_index}.')
                     self._grid[row_index][column_index] = value
                 else:
                     raise ValueError(f'value must be between 1 and {self._size + 1}')
@@ -105,3 +117,17 @@ if __name__ == '__main__':
                             .set(11, 8, 8)\
                             .build()
     print(sudoku_grid)
+
+    array = [[0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 5, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 7, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0],
+             [0, 0, 1, 0, 0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0, 0, 0, 8, 0],
+             [9, 0, 0, 0, 0, 0, 0, 0, 1],
+            ]
+
+    sudoku_grid_2 = SudokuGrid.from_array(array)
+    print(sudoku_grid_2)
