@@ -15,11 +15,13 @@ class SudokuGrid:
 
     def __str__(self):
         s = ''
+        value_string_max_length = len(str(self.size))
         for i in range(self.size):
-            # s += '-'*(self.size*2-1) + '\n'
-            s += '|'.join([str(self._grid [i][j]) for j in range(self.size)])
-            s += '\n'
-        return s
+            s += ('+' + '-'*value_string_max_length)*self.size + '+\n'
+            s += ('+' + '|'.join([f'{self._grid[i][j]:{value_string_max_length}}'
+                                  if self._grid[i][j] != 0 else ' '*value_string_max_length for j in range(self.size)])
+                  + '+\n')
+        return s + ('+' + '-'*value_string_max_length)*self.size + '+\n'
 
     class Builder:
         def __init__(self, size=9):
@@ -97,9 +99,9 @@ class SudokuGrid:
 
 
 if __name__ == '__main__':
-    sudoku_grid = SudokuGrid.Builder()\
+    sudoku_grid = SudokuGrid.Builder(size=16)\
                             .set(2, 5, 3)\
-                            .set(7, 6, 0)\
-                            .set(9, 8, 8)\
+                            .set(16, 6, 0)\
+                            .set(11, 8, 8)\
                             .build()
     print(sudoku_grid)
